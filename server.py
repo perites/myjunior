@@ -4,6 +4,103 @@ from decorators import catch_errors, required_structure
 
 app = Flask(__name__)
 
+DOMAINS = [
+    {
+        'id': '121212',
+        'name': 'TheClassyInvestor.com',
+        "shortName": "TCI",
+        "pageInBroadcast": 'IMG`24',
+        "antiSpam": False,
+        "trackingLinkInfo": {
+            "type": "click",
+            "start": "key123",
+            "end": "key456"
+        },
+        "customPriorityUnsubLinkInfo": {
+            "type": "",
+            "start": "",
+            "end": ""
+        },
+        "stylesSettings": {
+            "fontSize": 14,
+            "fontFamily": "Arial",
+            "linksColor": "#1E90FF",
+            "sidePadding": 30,
+            "upperDownPadding": 20,
+            "addAfterPriorityBlock": '<br><br>',
+            "priorityFooterUrlTemplate": "https://alex-site.com/footer",
+            "imageBlock": {
+                "src": "https://alex-site.com/banner.jpg",
+                "alt": "Exclusive Offer Banner"
+            }
+        },
+        "template": "<html><body><h1>Exclusive Offer Just for You!</h1><p>Click the link below to claim your discount now!</p></body></html>"
+    },
+    {
+        'id': '101010',
+        'name': 'StateOfMoney.com',
+        "shortName": "SOM",
+        "pageInBroadcast": 'IMG`24',
+        "antiSpam": False,
+        "trackingLinkInfo": {
+            "type": "view",
+            "start": "key112",
+            "end": "key334"
+        },
+        "customPriorityUnsubLinkInfo": {
+            "type": "unsubscribe",
+            "start": "key556",
+            "end": "key778"
+        },
+        "stylesSettings": {
+            "fontSize": 16,
+            "fontFamily": "Roboto",
+            "linksColor": "#FF5733",
+            "sidePadding": 20,
+            "upperDownPadding": 25,
+            "addAfterPriorityBlock": '',
+            "priorityFooterUrlTemplate": "https://myportfolio.alex/footer",
+            "imageBlock": {
+                "src": "https://myportfolio.alex/banner.jpg",
+                "alt": "Personal Portfolio Offer"
+            }
+        },
+        "template": "<html><body><h1>Your Personal Portfolio Awaits!</h1><p>Don't miss your chance to get exclusive access!</p></body></html>"
+    },
+    {
+        'id': '2020',
+        'name': 'TheBruhDomain.com',
+        "shortName": "TBD",
+        "pageInBroadcast": 'platoon',
+        "antiSpam": False,
+        "trackingLinkInfo": {
+            "type": "click",
+            "start": "key999",
+            "end": "key333"
+        },
+        "customPriorityUnsubLinkInfo": {
+            "type": "unsubscribe",
+            "start": "key555",
+            "end": "key888"
+        },
+        "stylesSettings": {
+            "fontSize": 15,
+            "fontFamily": "Verdana",
+            "linksColor": "#32CD32",
+            "sidePadding": 15,
+            "upperDownPadding": 30,
+            "addAfterPriorityBlock": '<br><br><br>',
+            "priorityFooterUrlTemplate": "https://alex-dev.io/footer",
+            "imageBlock": {
+                "src": "https://alex-dev.io/banner.jpg",
+                "alt": "Developer Tools Offer"
+            }
+        },
+        "template": "<html><body><h1>Special Discount for Developers!</h1><p>Claim your offer now and enhance your development tools!</p></body></html>"
+    }
+
+]
+
 
 @app.route('/make/copies', methods=['POST'])
 @catch_errors
@@ -42,6 +139,34 @@ def make_copies():
             ]
         }
     ]
+
+
+@app.route('/user/domains', methods=['GET'])
+@catch_errors
+def user_domains():
+    return [
+        {
+            'id': '121212',
+            'name': 'TheClassyInvestor.com'},
+        {
+            'id': '101010',
+            'name': 'StateOfMoney.com'
+        },
+        {
+            'id': '2020',
+            'name': 'TheBruhDomain.com'
+        }
+    ]
+
+
+@app.route('/user/domains/<domain_id>')
+@catch_errors
+def domain_settings(domain_id):
+    for domain_info in DOMAINS:
+        if domain_info['id'] == domain_id:
+            return domain_info, 200
+
+    return {'message': 'Domain with specified id not found in current user'}, 400
 
 
 if __name__ == "__main__":
