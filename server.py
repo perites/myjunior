@@ -18,8 +18,6 @@ def make_copies():
                 "Simple page for RHOB235"
             ],
             "copyImagesUrls": [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s",
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s"
             ]
         },
