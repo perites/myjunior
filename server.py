@@ -29,10 +29,7 @@ DOMAINS = [
             "upperDownPadding": 20,
             "addAfterPriorityBlock": '<br><br>',
             "priorityFooterUrlTemplate": "https://alex-site.com/footer",
-            "imageBlock": {
-                "src": "https://alex-site.com/banner.jpg",
-                "alt": "Exclusive Offer Banner"
-            }
+            "imageBlock": "img=URL"
         },
         "template": "<html><body><h1>Exclusive Offer Just for You!</h1><p>Click the link below to claim your discount now!</p></body></html>"
     },
