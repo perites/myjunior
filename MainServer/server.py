@@ -1,6 +1,6 @@
 from flask import Flask, session, request, redirect, make_response
 import json
-from decorators import catch_errors, required_structure
+from decorators import catch_errors, required_structure, jwt_required
 import urllib.parse
 import os
 import jwt
@@ -77,11 +77,14 @@ def auth_callback():
     return response
 
 
-@app.route('/make/copies', methods=['POST'])
-@catch_errors
-@required_structure(['domainId', 'date'])
-def make_copies():
-    pass
+# @app.route('/make/copies', methods=['POST'])
+# @catch_errors
+# @jwt_requared
+# @required_structure(['domainId', 'date'])
+# def make_copies():
+#     headers = {"Authorization": f"Bearer {g.jwt_token}"}
+#     response = requests.get(url, headers=headers)
+#     domain_info = requests.get('')
 
 
 if __name__ == "__main__":

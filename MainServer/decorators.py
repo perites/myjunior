@@ -1,7 +1,9 @@
 import functools
 import builtins
-from flask import request
+from flask import request, g
 import exceptions
+
+
 def catch_errors(func):
     @functools.wraps(func)
     def wrapped_func(*args, **kwargs):
@@ -15,6 +17,14 @@ def catch_errors(func):
                     'error_details': f'{type(e)} : {str(e)}'}, status_code
 
     return wrapped_func
+
+
+def jwt_required():
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return {'message': 'jwt token missing'}, 403
+
+    g.jwt_token = auth_header.split(' ')[1]
 
 
 def required_structure(structure):
