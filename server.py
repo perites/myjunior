@@ -57,10 +57,7 @@ DOMAINS = [
             "upperDownPadding": 25,
             "addAfterPriorityBlock": '',
             "priorityFooterUrlTemplate": "https://myportfolio.alex/footer",
-            "imageBlock": {
-                "src": "https://myportfolio.alex/banner.jpg",
-                "alt": "Personal Portfolio Offer"
-            }
+            "imageBlock": "img=URL"
         },
         "template": "<html><body><h1>Your Personal Portfolio Awaits!</h1><p>Don't miss your chance to get exclusive access!</p></body></html>"
     },
@@ -88,10 +85,7 @@ DOMAINS = [
             "upperDownPadding": 30,
             "addAfterPriorityBlock": '<br><br><br>',
             "priorityFooterUrlTemplate": "https://alex-dev.io/footer",
-            "imageBlock": {
-                "src": "https://alex-dev.io/banner.jpg",
-                "alt": "Developer Tools Offer"
-            }
+            "imageBlock": "img=URL"
         },
         "template": "<html><body><h1>Special Discount for Developers!</h1><p>Claim your offer now and enhance your development tools!</p></body></html>"
     }
