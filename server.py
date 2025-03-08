@@ -12,7 +12,7 @@ DOMAINS = [
         "pageInBroadcast": 'IMG`24',
         "antiSpam": False,
         "trackingLinkInfo": {
-            "type": "click",
+            "type": "RT TM",
             "start": "key123",
             "end": "key456"
         },
@@ -43,7 +43,7 @@ DOMAINS = [
         "pageInBroadcast": 'IMG`24',
         "antiSpam": False,
         "trackingLinkInfo": {
-            "type": "view",
+            "type": "CM TM",
             "start": "key112",
             "end": "key334"
         },
@@ -74,7 +74,7 @@ DOMAINS = [
         "pageInBroadcast": 'platoon',
         "antiSpam": False,
         "trackingLinkInfo": {
-            "type": "click",
+            "type": "VolumeGreen",
             "start": "key999",
             "end": "key333"
         },
