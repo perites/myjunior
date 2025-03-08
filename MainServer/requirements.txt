@@ -1,5 +1,5 @@
 flask
-pyotp
+pyjwt
 requests
 flask_cors
 flask-wtf
