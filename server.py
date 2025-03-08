@@ -1,50 +1,112 @@
-from flask import Flask
-
+from flask import Flask, session, request, redirect
+import json
 from decorators import catch_errors, required_structure
+import urllib.parse
+import os
+import pyotp
+import requests
+import hashlib
+from flask_cors import cross_origin
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
+app_secret_key = os.getenv("SERVER_SECRET_KEY")
+if not app_secret_key:
+    raise ValueError('No server secret key provided')
+app.secret_key = app_secret_key
+csrf = CSRFProtect(app)
 
 
-@app.route('/make/copies', methods=['POST'])
+def get_user_info(credentials_token):
+    url = "https://www.googleapis.com/oauth2/v2/userinfo"
+
+    headers = {"Authorization": f"Bearer {credentials_token}"}
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        user_info = response.json()
+        return user_info
+    else:
+        raise Exception(
+            f'Error while receiving user data. Response from google : {response.json()} status code : {response.status_code}')
+
+
+@app.route('/myjunior/auth/login/web', methods=['GET'])
 @catch_errors
-@required_structure(['domainId', 'date'])
-def make_copies():
-    return [
-        {
+def login():
+    request_args = request.args
+    access_code = request_args.get('access_code')
+    if not access_code:
+        return {'message': 'Access Code missing'}, 401
 
-            "copyName": "RHOB235",
-            "copyHtml": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>RHOB235 Page</title>\n    <style>\n        body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }\n        h1 { color: #333; }\n        p { font-size: 16px; }\n    </style>\n</head>\n<body>\n    <h1>Welcome to RHOB235</h1>\n    <p>This is a simple example page for RHOB235.</p>\n    <img src=\"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s\" alt=\"Image 1\">\n    <img src=\"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s\" alt=\"Image 2\">\n    <img src=\"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s\" alt=\"Image 3\">\n</body>\n</html>",
-            "copySLS": [
-                "Simple page for RHOB235"
-            ],
-            "copyImagesUrls": [
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s"
-            ]
-        },
-        {
+    session['auth'] = {'access_code': access_code, 'logged': False}
 
-            "copyName": "MPEE25",
-            "copyHtml": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>MPEE25 Page</title>\n    <style>\n        body { font-family: Verdana, sans-serif; padding: 20px; background: #e3f2fd; }\n        h1 { color: #0277bd; }\n        .content { padding: 10px; background: white; border-radius: 5px; }\n    </style>\n</head>\n<body>\n    <div class=\"content\">\n        <h1>Welcome to MPEE25</h1>\n        <p>This is another example page for MPEE25.</p>\n        <img src=\"https://media1.tenor.com/m/UfA8GLtoGIIAAAAC/%D0%BA%D0%BE%D0%BF%D0%B8%D0%BC-%D1%8D%D0%BB%D0%B8%D0%BA.gif\" alt=\"Image 1\">\n        <img src=\"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s\" alt=\"Image 2\">\n    </div>\n</body>\n</html>",
-            "copySLS": [
-                "Уникальное предложение только сегодня: получите скидку 50% на всю продукцию!",
-                "Не упустите шанс! Последний день распродажи с невероятными скидками и бонусами!",
-                "Эксклюзивный доступ к новым товарам: станьте первым, кто их увидит!",
-                "Уникальное предложение только сегодня: получите скидку 50% на всю продукцию!",
-                "Не упустите шанс! Последний день распродажи с невероятными скидками и бонусами!",
-                "Эксклюзивный доступ к новым товарам: станьте первым, кто их увидит!",
-                "Уникальное предложение только сегодня: получите скидку 50% на всю продукцию!",
-                "Не упустите шанс! Последний день распродажи с невероятными скидками и бонусами!",
-                "Эксклюзивный доступ к новым товарам: станьте первым, кто их увидит!"
-            ],
-            "copyImagesUrls": [
-                "https://media1.tenor.com/m/UfA8GLtoGIIAAAAC/%D0%BA%D0%BE%D0%BF%D0%B8%D0%BC-%D1%8D%D0%BB%D0%B8%D0%BA.gif",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQV51n74T1DasDqtAQR9vchlb1LrowQyr31g&s"
-            ]
-        }
-    ]
+    return redirect('http://127.0.0.1:5000/login?callback=http://127.0.0.1:5001/myjunior/auth/callback/web')
 
+
+@app.route('/myjunior/auth/callback/web')
+@catch_errors
+def web_callback():
+    session_auth = session['auth']
+    if not session_auth['logged']:
+        session_auth['logged'] = True
+
+        request_args = request.args
+        data = request_args.get('data')
+
+        credentials_dict = json.loads(urllib.parse.unquote(data))['credentials']
+
+        session_auth['credentials'] = credentials_dict
+        secret_totp_key = pyotp.random_base32()
+        session_auth['secret_totp_key'] = secret_totp_key
+
+        totp = pyotp.TOTP(secret_totp_key, interval=60)
+        otp = totp.now()
+
+        session['auth'] = session_auth
+
+        return otp  # call for web app with otp password
+    else:
+        return {
+            'message': 'Invalid callback call'
+        }, 403
+
+
+@app.route('/myjunior/auth/set-cookies')
+@catch_errors
+@cross_origin(origins="https://myfrontend.com")
+def set_cookies():
+    session_auth = session['auth']
+    del session['auth']
+
+    print(request.headers.get('Origin'))
+    if request.headers.get('Origin') != 'https://myfrontend.com':
+        return {'message': 'Wrong Origin'}, 403
+
+    request_args = request.args
+    otp = request_args.get('otp')
+    if not otp:
+        return {'message': 'OTP is missing'}, 401
+
+    secret_totp_key = session_auth['secret_totp_key']
+    totp = pyotp.TOTP(secret_totp_key, interval=60)
+
+    if not totp.verify(otp):
+        return {'message': 'OTP not valid'}, 403
+
+    credentials_dict = session_auth['credentials']
+
+    user_info = get_user_info(credentials_dict['token'])
+
+    access_code_from_email = hashlib.sha256((user_info['email'] + app_secret_key).encode()).hexdigest()
+
+    if not access_code_from_email == session_auth['access_code']:
+        return {'message': f'Access code is not correct for {user_info['email']}'}
+
+    return user_info  # responce.setcookies
+
+
+# def check_cookies
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

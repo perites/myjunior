@@ -1,1 +1,5 @@
 flask
+pyotp
+requests
+flask_cors
+flask-wtf
