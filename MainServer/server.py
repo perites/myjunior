@@ -160,5 +160,41 @@ def domain_settings(domain_id):
     return {'message': 'Domain with specified id not found in current user'}, 400
 
 
+@app.route('/user')
+@catch_errors
+def user():
+    return {
+        "yourTeamBroadcastSheetID": "abc123xyz",
+        "defaultStyles": {
+            "fontSize": "14",
+            "fontFamily": "Arial, sans-serif",
+            "linksColor": "#4a90e2",
+            "sidePadding": "20",
+            "upperDownPadding": "30",
+            "addAfterPriorityBlock": "<br><br><br><br>",
+            "priorityFooterUrlTemplate": "https://example.com/footer/{{id}}",
+            "imageBlock": """
+<table align="center">
+    <tr>
+        <td height="20" width="100%" style="max-width: 100%" class="horizontal-space"></td>
+    </tr>
+    <tr>
+        <td class="img-bg-block" align="center">
+            <a href="urlhere" target="_blank">
+                <img alt="ALT_TEXT" height="auto" src="IMAGE_URL" 
+                     style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;max-width: 550px;font-size:13px;" 
+                     width="280" />
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td height="20" width="100%" style="max-width: 100%" class="horizontal-space"></td>
+    </tr>
+</table>
+"""
+        }
+    }
+
+
 if __name__ == "__main__":
     app.run(debug=True)
