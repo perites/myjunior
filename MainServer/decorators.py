@@ -19,12 +19,17 @@ def catch_errors(func):
     return wrapped_func
 
 
-def jwt_required():
-    auth_header = request.headers.get('Authorization')
-    if not auth_header:
-        return {'message': 'jwt token missing'}, 403
+def jwt_required(func):
+    @functools.wraps(func)
+    def wrapped_func(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return {'message': 'jwt token missing'}, 403
 
-    g.jwt_token = auth_header.split(' ')[1]
+        g.jwt_token = auth_header.split(' ')[1]
+        return func(*args, **kwargs)
+
+    return wrapped_func
 
 
 def required_structure(structure):
