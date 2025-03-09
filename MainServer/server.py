@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from decorators import catch_errors, required_structure
+from MainServer.decorators import catch_errors, required_structure
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
