@@ -1,7 +1,9 @@
 import functools
 import builtins
 from flask import request
-import exceptions
+import MainServer.exceptions as exceptions
+
+
 def catch_errors(func):
     @functools.wraps(func)
     def wrapped_func(*args, **kwargs):
