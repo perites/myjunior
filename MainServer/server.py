@@ -64,8 +64,8 @@ def auth_callback():
     headers = {"Authorization": f"Bearer {jwt_token}"}
     json_data = {'credentials': json.dumps(credentials_dict)}
     db_response = requests.post(create_user_url, headers=headers, json=json_data)
-    if not db_response.status_code == 200:
-        return db_response.json(), db_response.status_code
+    # if not db_response.status_code == 200:
+    #     return db_response.json(), db_response.status_code
 
     response = make_response(redirect("https://maker-copy.vercel.app/"))  # change to front url
     response.set_cookie(
