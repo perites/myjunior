@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SERVER_SECRET_KEY")
 # csrf = CSRFProtect(app)
 
-CORS(app, origins=["https://toolza-alpha-7s37.vercel.app"], supports_credentials=True)
+CORS(app, origins=["https://maker-copy.vercel.app/"], supports_credentials=True)
 
 
 def get_user_info(credentials_token):
@@ -41,7 +41,8 @@ def login():
 
     session['access_code'] = access_code
 
-    return redirect('http://127.0.0.1:5000/login?callback=http://127.0.0.1:5001/myjunior/auth/callback')
+    return redirect(
+        'https://copy-helper.onrender.com/login?callback=https://myjunior-api-mokk.onrender.com/myjunior/auth/callback')
 
 
 @app.route('/myjunior/auth/callback')
@@ -59,14 +60,14 @@ def auth_callback():
     payload = {'sub': user_info['id']}
     jwt_token = jwt.encode(payload, os.getenv("JWT_SECRET_KEY"), algorithm="HS256")
 
-    # create_user_url = "https://www.googleapis.com/oauth2/v2/userinfo"
-    # headers = {"Authorization": f"Bearer {jwt_token}"}
-    # json_data = {'credentials': credentials_dict}
-    # db_response = requests.get(create_user_url, headers=headers, json=json_data)
-    # if not db_response.status_code == 200:
-    #     return db_response.json(), db_response.status_code
+    create_user_url = "https://myjunior-db-engine.onrender.com/v1/users"
+    headers = {"Authorization": f"Bearer {jwt_token}"}
+    json_data = {'credentials': json.dumps(credentials_dict)}
+    db_response = requests.post(create_user_url, headers=headers, json=json_data)
+    if not db_response.status_code == 200:
+        return db_response.json(), db_response.status_code
 
-    response = make_response(redirect("https://toolza-alpha-7s37.vercel.app"))  # change to front url
+    response = make_response(redirect("https://maker-copy.vercel.app/"))  # change to front url
     response.set_cookie(
         "jwtToken",
         jwt_token,
@@ -79,95 +80,26 @@ def auth_callback():
 
 @app.route('/make/copies', methods=['POST'])
 @catch_errors
-# @jwt_required
+@jwt_required
 @required_structure(['domainId', 'date'])
 def make_copies():
-    request_args = request.args
+    request_args = request.json
 
-    # headers = {"Authorization": f"Bearer {g.jwt_token}"}
+    headers = {"Authorization": f"Bearer {g.jwt_token}"}
 
-    domain_info = {
-        'id': '121212',
-        'name': 'WorldFinReport.com',
-        "shortName": "TCI",
-        "pageInBroadcast": 'IMG`24',
-        "antiSpam": False,
-        "trackingLinkInfo": {
-            "type": "click",
-            "start": "key123",
-            "end": "key456"
-        },
-        "customPriorityUnsubLinkInfo": {
-            "type": "",
-            "start": "",
-            "end": ""
-        },
-        "stylesSettings": {
-            "fontSize": 14,
-            "fontFamily": "Arial",
-            "linksColor": "#1E90FF",
-            "sidePadding": 30,
-            "upperDownPadding": 20,
-            "addAfterPriorityBlock": '<br><br>',
-            "priorityFooterUrlTemplate": "https://alex-site.com/footer",
-            "imageBlock": {
-                "src": "https://alex-site.com/banner.jpg",
-                "alt": "Exclusive Offer Banner"
-            }
-        },
-        "template": ''
-    }
-    credentials = 'RECIVE FROM DB'
+    DB_URL = 'https://myjunior-db-engine.onrender.com/v1'
+    domain_info = requests.get(DB_URL + f'/domains/{request_args['domainId']}', headers=headers).json()
+    user_info = requests.get(DB_URL + '/users', headers=headers).json()
 
-    user_info = {
-        "yourTeamBroadcastSheetID": "1ZL2P0DOJvMkQqS3eKZaki5xYW0dkwXsLmMrdbFWxDTU",
-        "FolderWithPartners": "1-WFEkKNjVjaJDNt2XKBeJhpIQUviBVim",
-        "PriorityProductsTableId": "1e40khWM1dKTje_vZi4K4fL-RA8-D6jhp2wmZSXurQH0",
-
-        "DefaultStyles": {
-            "FontSize": "21px",
-            "FontFamily": "Tahoma",
-            "LinksColor": "#005fde",
-            "SidePadding": "30px",
-            "UpperDownPadding": "10px",
-            "AddAfterPriorityBlock": "<br><br>",
-            "PriorityFooterUrlTemplate": "<b><a target=\"_blank\" href=\"PRIORITY_FOOTER_URL\" style=\"text-decoration: underline; color: #ffffff;\">PRIORITY_FOOTER_TEXT_URL</a></b>",
-            "ImageBlock": "<table align=\"center\"><tr>\n  <td height=\"20\" width=\"100%\" style=\"max-width: 100%\" class=\"horizontal-space\"></td>\n</tr>\n<tr>\n  <td class=\"img-bg-block\" align=\"center\">\n    <a href=\"urlhere\" target=\"_blank\">\n      <img alt=\"ALT_TEXT\" height=\"auto\" src=\"IMAGE_URL\" style=\"border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;max-width: 550px;font-size:13px;\" width=\"280\" />\n        </a>\n  </td>\n</tr>\n<tr>\n  <td height=\"20\" width=\"100%\" style=\"max-width: 100%\" class=\"horizontal-space\"></td>\n</tr></table>"
-        },
-        "AntiSpamReplacements": {
-            "A": "А",
-            "E": "Е",
-            "I": "І",
-            "O": "О",
-            "P": "Р",
-            "T": "Т",
-            "H": "Н",
-            "K": "К",
-            "X": "Х",
-            "C": "С",
-            "B": "В",
-            "M": "М",
-            "e": "е",
-            "y": "у",
-            "i": "і",
-            "o": "о",
-            "a": "а",
-            "x": "х",
-            "c": "с",
-            "%": "％",
-            "$": "＄"
-        }
-    }
-
-    copies = requests.get('http://127.0.0.1:5000/domain/copies', json=
+    copies = requests.get('https://copy-helper.onrender.com/domain/copies', json=
     {
-        'domainInfo': {
+        'domain': {
             'name': domain_info['name'],
-            'pageInBroadcast': domain_info['pageInBroadcast']
+            'broadcastId': user_info['yourTeamBroadcastSheetID'],
+            'broadcastPage': domain_info['pageInBroadcast']
         },
-        'broadcastId': user_info['yourTeamBroadcastSheetID'],
-        'date': '2/16',
-        "credentials": credentials}
+        'date': request_args['date'],
+        "credentials": user_info['credentials']}
                           )
 
     result = []
@@ -175,12 +107,13 @@ def make_copies():
         if not copy_str:
             continue
 
-        ready_copy = requests.post('http://127.0.0.1:5000/copy/make', json={"credentials": credentials,
-                                                                            "domainInfo": domain_info,
-                                                                            'userSettings': user_info,
-                                                                            'copy': copy_str
+        ready_copy = requests.post('https://copy-helper.onrender.com/copy/make',
+                                   json={"credentials": user_info['credentials'],
+                                         "domainInfo": domain_info,
+                                         'userSettings': user_info,
+                                         'copy': copy_str
 
-                                                                            }).json()
+                                         }).json()
         ready_copy['copyName'] = copy_str
         result.append(ready_copy)
 
