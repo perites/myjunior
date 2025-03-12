@@ -1,6 +1,6 @@
 from flask import Flask, session, request, redirect, make_response, g
 import json
-from decorators import catch_errors, required_structure, jwt_required
+from MainServer.decorators import catch_errors, required_structure, jwt_required
 import urllib.parse
 import os
 import jwt

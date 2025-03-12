@@ -1,7 +1,7 @@
 import functools
 import builtins
 from flask import request, g
-import exceptions
+import MainServer.exceptions as exceptions
 
 
 def catch_errors(func):
