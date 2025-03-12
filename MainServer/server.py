@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SERVER_SECRET_KEY")
 # csrf = CSRFProtect(app)
 
-CORS(app, origins=["https://maker-copy.vercel.app"], supports_credentials=True)
+CORS(app, origins=["https://maker-copy.vercel.app"], supports_credentials=True, allow_credentials=True)
 
 
 def get_user_info(credentials_token):
