@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SERVER_SECRET_KEY")
 # csrf = CSRFProtect(app)
 
-CORS(app, origins=["https://maker-copy.vercel.app/"], supports_credentials=True)
+CORS(app, origins=["https://maker-copy.vercel.app"], supports_credentials=True)
 
 
 def get_user_info(credentials_token):
@@ -67,7 +67,7 @@ def auth_callback():
     # if not db_response.status_code == 200:
     #     return db_response.json(), db_response.status_code
 
-    response = make_response(redirect("https://maker-copy.vercel.app/"))  # change to front url
+    response = make_response(redirect("https://maker-copy.vercel.app"))  # change to front url
     response.set_cookie(
         "jwtToken",
         jwt_token,
