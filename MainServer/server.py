@@ -67,13 +67,15 @@ def auth_callback():
     # if not db_response.status_code == 200:
     #     return db_response.json(), db_response.status_code
 
-    response = make_response("https://maker-copy.vercel.app")  # change to front url
+    response = make_response(redirect("https://maker-copy.vercel.app"))  # change to front url
     response.set_cookie(
         "jwtToken",
         jwt_token,
         httponly=False,
         secure=True,
-        samesite='None'
+        samesite='None',
+        domain='maker-copy.vercel.app',
+        max_age=180 * 24 * 60 * 60,  # 1 year
     )
     return response
 
