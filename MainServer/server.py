@@ -88,7 +88,7 @@ def make_copies():
     headers = {"Authorization": f"Bearer {g.jwt_token}"}
 
     DB_URL = 'https://myjunior-db.onrender.com/v1'
-    domain_info = requests.get(DB_URL + f'/domains/{request_args['domainId']}', headers=headers).json()
+    domain_info = requests.get(DB_URL + f'/domains/{request_args["domainId"]}', headers=headers).json()
     user_info = requests.get(DB_URL + '/users', headers=headers).json()
 
     copies = requests.get('https://copy-helper.onrender.com/domain/copies', json=
