@@ -55,14 +55,14 @@ def auth_callback():
     user_info = get_user_info(credentials_dict['token'])
     access_code_from_email = hashlib.sha256((user_info['email'] + app.secret_key).encode()).hexdigest()
     if not access_code_from_email == session.get('access_code'):
-        return {'message': f'Access code is not correct for {user_info['email']}'}
+        return {'message': f'Access code is not correct for {user_info["email"]}'}
 
     payload = {'sub': user_info['id']}
     jwt_token = jwt.encode(payload, os.getenv("JWT_SECRET_KEY"), algorithm="HS256")
 
-    create_user_url = "https://myjunior-db-engine.onrender.com/v1/users"
+    create_user_url = "https://myjunior-db.onrender.com/v1/users"
     headers = {"Authorization": f"Bearer {jwt_token}"}
-    json_data = {'credentials': json.dumps(credentials_dict)}
+    json_data = {'credentials': credentials_dict}
     db_response = requests.post(create_user_url, headers=headers, json=json_data)
     # if not db_response.status_code == 200:
     #     return db_response.json(), db_response.status_code
@@ -87,7 +87,7 @@ def make_copies():
 
     headers = {"Authorization": f"Bearer {g.jwt_token}"}
 
-    DB_URL = 'https://myjunior-db-engine.onrender.com/v1'
+    DB_URL = 'https://myjunior-db.onrender.com/v1'
     domain_info = requests.get(DB_URL + f'/domains/{request_args['domainId']}', headers=headers).json()
     user_info = requests.get(DB_URL + '/users', headers=headers).json()
 
