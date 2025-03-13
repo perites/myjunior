@@ -69,7 +69,7 @@ def auth_callback():
 
 
 @app.route('/make/copies', methods=['POST'])
-@catch_errors
+# @catch_errors
 @jwt_required
 @required_structure(['domainId', 'date'])
 def make_copies():
@@ -78,10 +78,19 @@ def make_copies():
     headers = {"Authorization": f"Bearer {g.jwt_token}"}
 
     DB_URL = 'https://myjunior-db.onrender.com/v1'
-    domain_info = requests.get(DB_URL + f'/domains/{request_args["domainId"]}', headers=headers).json()
-    user_info = requests.get(DB_URL + '/users', headers=headers).json()
+    domain_info_request = requests.get(DB_URL + f'/domains/{request_args["domainId"]}', headers=headers)
+    if not domain_info_request.ok:
+        return domain_info_request.json(), domain_info_request.status_code
 
-    copies = requests.get('https://copy-helper.onrender.com/domain/copies', json=
+    domain_info = domain_info_request.json()
+
+    user_info_request = requests.get(DB_URL + '/users', headers=headers)
+    if not user_info_request.ok:
+        return user_info_request.json(), user_info_request.status_code
+
+    user_info = user_info_request.json()
+
+    copies_request = requests.get('https://copy-helper.onrender.com/domain/copies', json=
     {
         'domain': {
             'name': domain_info['name'],
@@ -90,10 +99,19 @@ def make_copies():
         },
         'date': request_args['date'],
         "credentials": user_info['credentials']}
-                          )
+                                  )
 
+    if not copies_request.ok:
+        print(copies_request)
+        return copies_request.json(), copies_request.status_code
+
+    copies = copies_request.json()
+
+    print(user_info)
+    print(domain_info)
+    print(copies)
     result = []
-    for copy_str in copies.json():
+    for copy_str in copies:
         if not copy_str:
             continue
 
