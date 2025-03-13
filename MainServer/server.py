@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SERVER_SECRET_KEY")
 # csrf = CSRFProtect(app)
 
-CORS(app, origins=["https://maker-copy.vercel.app"], supports_credentials=True)
+CORS(app, supports_credentials=True)
 
 
 def get_user_info(credentials_token):
@@ -63,8 +63,8 @@ def auth_callback():
     create_user_url = "https://myjunior-db.onrender.com/v1/users"
     headers = {"Authorization": f"Bearer {jwt_token}"}
     json_data = {'credentials': credentials_dict}
-    db_response = requests.post(create_user_url, headers=headers, json=json_data)
-   
+    requests.post(create_user_url, headers=headers, json=json_data)
+
     return redirect(f"https://maker-copy.vercel.app/set-cookies?jwtToken={jwt_token}")
 
 
