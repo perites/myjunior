@@ -63,9 +63,10 @@ def auth_callback():
     create_user_url = "https://myjunior-db.onrender.com/v1/users"
     headers = {"Authorization": f"Bearer {jwt_token}"}
     json_data = {'credentials': credentials_dict}
-    requests.post(create_user_url, headers=headers, json=json_data)
-
-    return redirect(f"https://maker-copy.vercel.app/set-cookies?jwtToken={jwt_token}")
+    create_user_result = requests.post(create_user_url, headers=headers, json=json_data)
+    # is_new = create_user_result.json()['isNew']
+    is_new = 1
+    return redirect(f"https://maker-copy.vercel.app/first-setup/{jwt_token}/{is_new}")
 
 
 @app.route('/make/copies', methods=['POST'])
